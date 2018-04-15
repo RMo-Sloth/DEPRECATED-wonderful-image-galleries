@@ -12,7 +12,7 @@ This code is intended for use in Joomla! If you want to see some examples look a
   <li><b>/css</b>: contains a php file that creates the css to assign user defined colors to the svg. (does nothing besides assigning colors!!!)</li>
   <li><b>/js</b>: contains javascript files</li>
    <ul>
-     <li><b>/animations</b>: contains a function with the animation logic of a certain animations using javascript's	window.requestAnimationFrame().</li>
+     <li><b>/animations</b>: contains a function with the animation logic of a certain animation using javascript's	window.requestAnimationFrame().</li>
      <li><b>/js.php</b>: contains the logic for the general functionality and implements the relevant animation from the animations folder</li>
    </ul>
   <li><b>/svg</b>: contains files that create the svg</li>
