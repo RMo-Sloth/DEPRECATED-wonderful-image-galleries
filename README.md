@@ -22,6 +22,6 @@ This code is intended for use in Joomla! If you want to see some examples look a
    </ul>
  </ul>
   <li><b>/install.wig.php</b>: Joomla! installation file</li>
-  <li><b>/mod_wig.php</b>: forgot what this file was for. I'm sure it's somehow important xD.</li>
+  <li><b>/mod_wig.php</b>: forgot what this file was for. I'm sure it's somehow important in loading the module in Joomla! xD.</li>
   <li><b>/mod_wig.xml</b>: file that creates the module interface in Joomla! and provides general information abut the module.</li>
 </ul>
