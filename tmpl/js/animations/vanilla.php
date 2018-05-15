@@ -1,4 +1,4 @@
-<?
+<?php
 	/**
 	 * @package Module Wonderful Image Galleries
 	 * @author RMo
