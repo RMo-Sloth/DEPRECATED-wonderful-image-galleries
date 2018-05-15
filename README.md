@@ -2,7 +2,7 @@
 A gallery module with animated transitions.
 
 # examples and installation
-This code is intended for use in Joomla! If you want to see some examples look at https://www.webimprovement.eu/wonderful-image-galleries. You can also download the currently released version of WIG (Wonderful Image Galleries) from there.
+This code is intended for use in Joomla! If you want to see some examples look at https://www.webimprovement.eu/wonderful-image-galleries. You can also download the currently released version of WIG (Wonderful Image Galleries) from there. However to see the current version on Github just download the master branch and install the module using the Joomla installer.
 # project structure
 <ul>
  <li><b>/example_images</b>: contains some example images</li>
