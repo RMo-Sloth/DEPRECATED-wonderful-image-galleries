@@ -1,3 +1,11 @@
+<?php 
+	/**
+	 * @package Module Wonderful Image Galleries
+	 * @author RMo
+	 * @copyright (C) 2018 - RMo
+	 * @license GNU/GPLv3 http://www.gnu.org/licenses/gpl-3.0.html
+	**/
+?>
 
 <svg id="wonderful-image-gallery-<?php echo $module->id; ?>" class="wonderful-image-gallery" viewBox="0 0 3000 2500" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"> 
 	<defs>
