@@ -5,7 +5,7 @@
 	 * @copyright (C) 2018 - RMo
 	 * @license GNU/GPLv3 http://www.gnu.org/licenses/gpl-3.0.html
 	**/
-	php defined('_JEXEC') or die; 
+	defined('_JEXEC') or die; 
 ?>
 function(){
 	let thisWonderfulImageGalleryObjectMainImage = this;
