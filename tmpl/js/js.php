@@ -1,11 +1,11 @@
-<?
+<?php
 	/**
 	 * @package Module Wonderful Image Galleries
 	 * @author RMo
 	 * @copyright (C) 2018 - RMo
 	 * @license GNU/GPLv3 http://www.gnu.org/licenses/gpl-3.0.html
 	**/
-	php defined('_JEXEC') or die; 
+	defined('_JEXEC') or die; 
 ?>
 <script>
 window.addEventListener('load', function(){
