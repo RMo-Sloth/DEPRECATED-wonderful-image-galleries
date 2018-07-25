@@ -6,11 +6,13 @@ abstract class Animation{
   protected $index;
   protected $imagesBackgroundColor;
   protected $backgroundColor;
+  protected $buttonBackgroundColor;
 
-  public function __construct( $id, $imagesBackgroundColor, $backgroundColor ){
+  public function __construct( $id, $imagesBackgroundColor, $backgroundColor, $buttonBackgroundColor ){
     $this->index = $id;
     $this->imagesBackgroundColor = $imagesBackgroundColor;
     $this->backgroundColor = $backgroundColor;
+    $this->buttonBackgroundColor = $buttonBackgroundColor;
   }
   public function css(){
     // css styling of svg for easy theming
@@ -36,7 +38,7 @@ abstract class Animation{
     echo "}";
 
     echo "#wonderful-image-gallery-$this->index .slides>rect.active-slide{";
-    echo "	stroke: $this->backgroundColor";
+    echo "	stroke: $this->buttonBackgroundColor";
     echo "}";
 
     echo "#wonderful-image-gallery-$this->index .slides>image{";

@@ -12,7 +12,8 @@
 	$animation = new testAnimation(
 		$module->id,
 		$params->get('images-background-color'),
-		$params->get('background-color')
+		$params->get('background-color'),
+		$params->get('buttons-background-color')
 	);
 	$animation->css();
 
