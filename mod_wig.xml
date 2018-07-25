@@ -15,7 +15,7 @@
         <filename>tmpl/default.php</filename>
         <filename>tmpl/index.html</filename>
 		<folder>example_images</folder>
-		<folder>tmpl/css</folder>
+		<folder>tmpl/lib</folder>
 		<folder>tmpl/js</folder>
 		<folder>tmpl/svg</folder>
 		<folder>tmpl</folder>
@@ -35,7 +35,7 @@
 					   label="IMAGES_LABEL"
 					   description = "IMAGES_DESCR"
 					   />
-				
+
 				<field name="animation-type-header" type="note" label="ANIMATION_TYPE_HEADER_LABEL"/>
 				<field name="animation-type-list" type="list" label="ANIMATION_TYPE_LIST_LABEL">
 					<option value="vanilla, ' '">ANIMATION_DESCR_VANILLA</option>
@@ -46,28 +46,28 @@
 				<field name="animation-interval" type="integer" default="3000" label="ANIMATION_INTERVAL_LABEL" description="ANIMATION_INTERVAL_DESCR" first="1000" last="60000" step="100" />
 
 				<field name="colors-header" type="note" label="COLORS_HEADER_LABEL"/>
-				<field 
-					name="border-color" 
+				<field
+					name="border-color"
 					type="color" default="#dde1e6"
 					label="BORDER_COLOR_LABEL"
 					description="BORDER_COLOR_DESCR" />
-				<field 
-					name="background-color" 
+				<field
+					name="background-color"
 					type="color" default="#fff"
 					label="BACKGROUND_COLOR_LABEL"
 					description="BACKGROUND_COLOR_DESC" />
-				<field 
-					name="images-background-color" 
+				<field
+					name="images-background-color"
 					type="color" default="#000"
 					label="IMAGES_BACKGROUND_COLOR_LABEL"
 					description="IMAGES_BACKGROUND_COLOR_DESC" />
-				<field 
-					name="buttons-color" 
+				<field
+					name="buttons-color"
 					type="color" default="#dce4f5"
 					label="BUTTONS_COLOR_LABEL"
 					description="BUTTON_COLOR_DESCR" />
-				<field 
-					name="buttons-background-color" 
+				<field
+					name="buttons-background-color"
 					type="color" default="#0077ff"
 					label="BUTTONS_BACKGROUND_COLOR_LABEL"
 					description="BUTTONS_BACKGROUND_COLOR_DESCR" />
