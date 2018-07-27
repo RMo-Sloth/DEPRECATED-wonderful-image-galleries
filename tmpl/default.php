@@ -13,9 +13,11 @@
 		$module->id,
 		$params->get('images-background-color'),
 		$params->get('background-color'),
-		$params->get('buttons-background-color')
+		$params->get('buttons-color'),
+		$params->get('buttons-background-color'),
+		$params->get('border-color')
 	);
 	$animation->css();
+	$animation->svg();
 
-	require JModuleHelper::getLayoutPath('mod_wig', 'svg/svg');
 	require JModuleHelper::getLayoutPath('mod_wig', 'js/js');
