@@ -43,4 +43,3 @@ class mod_wigInstallerScript
         //echo '<p>Anything here happens after the installation/update/uninstallation of the module</p>';
     }
 }
-?>
