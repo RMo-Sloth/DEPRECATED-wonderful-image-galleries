@@ -2,24 +2,12 @@
 A gallery module with animated transitions.
 
 # examples and installation
-This code is intended for use in Joomla! If you want to see some examples look at https://www.webimprovement.eu/wonderful-image-galleries. You can also download the currently released version of WIG (Wonderful Image Galleries) from there. However to see the current version on Github just download the master branch and install the module using the Joomla installer.
+If you want to see some examples of what this module does look at https://www.webimprovement.eu/wonderful-image-galleries. You can also download the latest released version of WIG (Wonderful Image Galleries) from there. You can also run the code from the tmpl/lib/animation.php file.
 # project structure
 <ul>
  <li><b>/example_images</b>: contains some example images</li>
  <li><b>/language</b>: contain the language files, defining translations</li>
- <li><b>/tmpl</b>: contain the module specific files</li>
- <ul>   
-  <li><b>/css</b>: contains a php file that creates the css to assign user defined colors to the svg. (does nothing besides assigning colors!!!)</li>
-  <li><b>/js</b>: contains javascript files</li>
-   <ul>
-     <li><b>/animations</b>: contains a function with the animation logic of a certain animation using javascript's	window.requestAnimationFrame().</li>
-     <li><b>/js.php</b>: contains the logic for the general functionality and implements the relevant animation from the animations folder</li>
-   </ul>
-  <li><b>/svg</b>: contains files that create the svg</li>
-   <ul>
-    <li><b>/animations</b>: contains the mask used for a specific animation</li>
-    <li><b>/svg.php</b>: creates the svg it also includes a file with a mask from the animations folder</li>
-   </ul>
+ <li><b>/tmpl/lib/animation.php</b>: Contains the entire logic of the wonderful-image-gallery generation. Also contains all different animation types. New animation types are made by creating a new class that extends the Animation class. Only the svg mask and the JavaScript that animates this mask have to be added in the svg_mask() and the js_animateMask() methods of the newly created class.</li>
  </ul>
   <li><b>/install.wig.php</b>: Joomla! installation file</li>
   <li><b>/mod_wig.php</b>: forgot what this file was for. I'm sure it's somehow important in loading the module in Joomla! xD.</li>
