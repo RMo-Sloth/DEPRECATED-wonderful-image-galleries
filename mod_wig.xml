@@ -15,12 +15,10 @@
         <filename>tmpl/default.php</filename>
         <filename>tmpl/index.html</filename>
 		<folder>example_images</folder>
+    <folder>tmpl</folder>
 		<folder>tmpl/lib</folder>
-		<folder>tmpl/js</folder>
-		<folder>tmpl/svg</folder>
-		<folder>tmpl</folder>
 		<folder>language</folder>
-    </files>
+  </files>
 	<scriptfile>install.wig.php</scriptfile>
     <config>
 		<fields name="params">
@@ -38,9 +36,9 @@
 
 				<field name="animation-type-header" type="note" label="ANIMATION_TYPE_HEADER_LABEL"/>
 				<field name="animation-type-list" type="list" label="ANIMATION_TYPE_LIST_LABEL">
-					<option value="vanilla, ' '">ANIMATION_DESCR_VANILLA</option>
-					<option value="animateWidth, clip1">ANIMATION_DESCR_WIDTH</option>
-					<option value="animationCircles, clip2">ANIMATION_DESCR_BUBBLES</option>
+					<option value="vanilla">ANIMATION_DESCR_VANILLA</option>
+					<option value="width">ANIMATION_DESCR_WIDTH</option>
+					<option value="circles">ANIMATION_DESCR_BUBBLES</option>
 				</field>
 				<field name="animation-duration" type="integer" default="1000" label="ANIMATION_DURATION_LABEL" description="ANIMATION_DURATION_DESCR" first="500" last="2000" step="50" />
 				<field name="animation-interval" type="integer" default="3000" label="ANIMATION_INTERVAL_LABEL" description="ANIMATION_INTERVAL_DESCR" first="1000" last="60000" step="100" />

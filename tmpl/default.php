@@ -7,17 +7,29 @@
 **/
 	defined('_JEXEC') or die;
 
-	// compile the module
 	require JModuleHelper::getLayoutPath('mod_wig', 'lib/animation');
-	$animation = new testAnimation(
+	//
+	$fileLocation = JPATH_SITE."/images/image_galleries/".$params['images'];
+	$exclude = array('index.html');
+	$imageArray = JFolder::files($fileLocation, '.', false, false, $exclude);
+
+	$fileBaseUrl = JUri::root()."images/image_galleries/".$params['images'].'/';
+	foreach($imageArray as &$imagename){
+		$imagename = $fileBaseUrl.$imagename;
+	}
+
+	// compile the module
+	$animationType = $params->get('animation-type-list', 'vanilla');
+	$functionName = $animationType.'Animation';
+	$animation = new $functionName(
 		$module->id,
 		$params->get('images-background-color'),
 		$params->get('background-color'),
 		$params->get('buttons-color'),
 		$params->get('buttons-background-color'),
-		$params->get('border-color')
+		$params->get('border-color'),
+		$imageArray,
+		$params->get('animation-duration'),
+		$params->get('animation-interval')
 	);
-	$animation->css();
-	$animation->svg();
-
-	require JModuleHelper::getLayoutPath('mod_wig', 'js/js');
+	$animation->create();
