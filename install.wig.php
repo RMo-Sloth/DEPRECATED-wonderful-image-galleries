@@ -25,12 +25,13 @@ class mod_wigInstallerScript
     function uninstall($parent)
     {
         echo '<p>The "Wonderful Image Galleries"-module has been uninstalled</p>';
-		JFactory::getApplication()->enqueueMessage('If you have any feedback for the module please provide it to: <a href="info@webimprovement.eu">info@evemails.com</a><br/><br/>');
+		JFactory::getApplication()->enqueueMessage('If you have any feedback for the module please provide it to: <a href="info@webimprovement.eu">info@webimprovement.eu</a><br/><br/>');
 		JFactory::getApplication()->enqueueMessage('We did <b>not</b> remove the map "Wonderful_Image_Galleries" from the media manager, since it may contain images you want to preserve. If you wish to remove these please do so manually.', 'notice');
     }
 
     function update($parent)
     {
+      JFactory::getApplication()->enqueueMessage("Because of some changes made in this update ( 2.0.0 ), you will have to manually update the animation-type for each WIG module. Otherwise the module won't load correctly. - Thank you.", 'notice');
     }
 
     function preflight($type, $parent)
