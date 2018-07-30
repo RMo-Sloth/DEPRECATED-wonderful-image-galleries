@@ -69,15 +69,6 @@ abstract class Animation{
   final protected function svg(){
     echo "<svg id='wonderful-image-gallery-$this->index' class='wonderful-image-gallery' viewBox='0 0 3000 2500' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'> ";
     echo '<defs>';
-
-    // gradient around play button
-    // TODO: check if this is still being used in the js
-  	echo 	 "<radialGradient id='attention-circle$this->index'>";
-  	echo     "<stop stop-color='$this->buttonBackgroundColor' offset='0%' stop-opacity='1' />";
-  	echo     "<stop stop-color='$this->backgroundColor' offset='75%' stop-opacity='1' />";
-  	echo	   "<stop id='playButtonEffect' stop-color='$this->buttonBackgroundColor' offset='80%' stop-opacity='0' />";
-  	echo     "<stop offset='1050' stop-color='white' stop-opacity='0'/>";
-  	echo 	 "</radialGradient>";
     // echo the mask
     echo  "<mask id='wig_mask'>";
           $this->svg_mask();
