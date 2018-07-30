@@ -67,6 +67,7 @@ abstract class Animation{
     echo "</style>";
   }
   final protected function svg(){
+    // make sure to output using echo, because templating creates linebreaks, which cause issues with js's perviousSibling selector
     echo "<svg id='wonderful-image-gallery-$this->index' class='wonderful-image-gallery' viewBox='0 0 3000 2500' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'> ";
     echo '<defs>';
     // echo the mask
@@ -118,217 +119,210 @@ abstract class Animation{
       echo "</svg>";
   }
   protected abstract function svg_mask();
-  final protected function js(){
-  echo  '<script>';
+  final protected function js(){ ?>
+    <script>
 
-  echo  "window.addEventListener('load', function(){";
-  echo    "wonderfulImageGallery$this->index.init();";
-  echo  "}, false);";
+    window.addEventListener('load', function(){
+      wonderfulImageGallery<?php echo $this->index; ?>.init()
+    }, false);
 
-  echo  "let wonderfulImageGallery$this->index = {";
-
-    // setup wonderfulImageGallery object
-    echo "wonderfulImageGalleryElement: document.getElementById('wonderful-image-gallery-$this->index'),";
-    echo "activeDia: 0,";
-    echo "isCurrentlyAnimating: false,";
-    echo "imgUrls: ".json_encode($this->imageUrls).",";
-    echo "currentlyShownImageIndex: 0,";
-    echo "mainImage: {";
-    echo    "imageContainer: document.querySelector('#wonderful-image-gallery-$this->index .main-images'),";
-    // TODO: refactor the mask into $this->svg()
-    // echo    "mask: 'clip2',"; // $params->get('animation-type-list', 'vanilla'))[1] = clip2
-    // TODO: can probably refactor the animation name out too
-    // echo		"animationName: 'animationCircles',"; // $params->get('animation-type-list', 'vanilla'))[0] = 'animationCircles'
-    echo 		"animationDuration:$this->animationDuration,";
-    echo 		"animationInterval: $this->animationInterval,";
-    // TODO: refactor this function output to a php method
-    echo 		"animation:";
-            $this->js_animateMask();
-    echo    ',';
-    //remove old image if one exists
-    echo 			"endAnimation: function(){";
-    echo      "if( document.querySelector('#wonderful-image-gallery-$this->index .old-image') !== null ){";
-    echo        "document.querySelector('#wonderful-image-gallery-$this->index .old-image').remove();";
-    echo    	"}";
-    //remove rect
-    echo      "document.getElementById('new-rect$this->index').remove();";
-    //make new image the old image
-    echo			"document.querySelector('#wonderful-image-gallery-$this->index .new-image').setAttribute('class', 'old-image');";
-    echo      "document.querySelector('#wonderful-image-gallery-$this->index .old-image').setAttribute('mask','url(#displayed_mask)');";
-    echo      "}"; // end endAnimation
-    echo 	 "},"; // end mainImage
-    echo 	 "diaPreview:{";
-    echo      "imagePreviewContainer: document.querySelector('#wonderful-image-gallery-$this->index .slides'),";
-    echo      "imageBackgrounds: document.querySelectorAll('#wonderful-image-gallery-$this->index .slides>rect'),";
-    echo		  "hiddenLeftDias: 0,";
-    echo		  "previousPageButton: document.querySelector('#wonderful-image-gallery-$this->index .leftNav'),";
-    echo		  "nextPageButton: document.querySelector('#wonderful-image-gallery-$this->index .rightNav')";
-    echo   "},"; // end diaPreview
-    echo   "playAndPauseButton:{";
-    echo       "pauseAndPlayButton: document.querySelector('#wonderful-image-gallery-$this->index .play-button'),";
-    echo	     "playIcon: document.querySelector('#wonderful-image-gallery-$this->index .play-button-play-mode'),";
-    echo		   "pauseIcon: document.querySelector('#wonderful-image-gallery-$this->index .play-button-pause-mode')";
-    echo	 "},"; // end playAndPauseButton
-    echo	 "init: function(){";
-    echo 	    "let thisWonderfulImageGalleryObject = this;";
-    // add eventlisteners pause and play button
-		echo    "this.playAndPauseButton.pauseAndPlayButton.addEventListener('click', function(){";
-		echo  	   "if(thisWonderfulImageGalleryObject.isCurrentlyAnimating ){";
-		echo 		      "thisWonderfulImageGalleryObject.pauseSlideShow();";
-		echo	     "}else{";
-		echo		      "thisWonderfulImageGalleryObject.runSlideShow();";
-		echo        "}";
-		echo    "});"; // end click this.playAndPauseButton.pauseAndPlayButton
-    // add eventlisteners next four dias button
-    echo  "this.diaPreview.nextPageButton.addEventListener('click', function(){";
-    echo      "thisWonderfulImageGalleryObject.showNextFourDiaPreviews();";
-    echo	"});"; // end click this.diaPreview.nextPageButton
-    // add eventlisteners previous four dias button
-		echo  "this.diaPreview.previousPageButton.addEventListener('click', function(){";
-		echo      "thisWonderfulImageGalleryObject.showPreviousFourDiaPreviews();";
-		echo  "});"; // end click this.diaPreview.previousPageButton
-    // add eventlisteners main image
-    echo  "this.mainImage.imageContainer.addEventListener('click', function(){";
-    echo  "if(thisWonderfulImageGalleryObject.isCurrentlyAnimating ){";
-    echo    " thisWonderfulImageGalleryObject.pauseSlideShow();";
-    echo  "}else{";
-    echo    "thisWonderfulImageGalleryObject.runSlideShow();";
-    echo	'}';
-    echo	'});'; // end click this.mainImage.imageContainer
-    // add eventlisteners to all preview images
-    echo "this.diaPreview.imageBackgrounds.forEach(function(slide){";
-    echo    "slide.addEventListener('click', function(){";
-    echo		  "thisWonderfulImageGalleryObject.currentlyShownImageIndex = parseInt(this.getAttribute('data-dia-nr'));";
-    echo		  "thisWonderfulImageGalleryObject.pauseSlideShow();";
-    echo		  "thisWonderfulImageGalleryObject.runSlide();";
-    echo    '});'; // end click single item in this.diaPreview.imageBackgrounds
-    echo	'});'; // end forEach this.diaPreview.imageBackgrounds
-    echo	'},'; // end init()
-    // hideInappropriateButtons()
-    echo	'hideInappropriateButtons: function(){';
-    echo		'let hiddenLeftDias = this.diaPreview.hiddenLeftDias;';
-    echo    'let diaTotal = this.imgUrls.length;';
-    echo		'let nextButton = this.diaPreview.nextPageButton;';
-    echo		'let previousButton = this.diaPreview.previousPageButton;';
-            //hide/show left button if..
-    echo		'if(hiddenLeftDias == 0){';
-    echo			'previousButton.style.display = "none";';
-    echo    '}else{';
-    echo			'previousButton.style.display = "inline";';
-    echo		'}';
-            //hide/show right button if..
-    echo		'if(diaTotal - hiddenLeftDias > 4){';
-    echo			'nextButton.style.display = "inline";';
-    echo		'}else{';
-    echo			'nextButton.style.display = "none";';
-    echo		'}';
-    echo	'},'; // end hideInappropriateButtons
-    // showNextFourDiaPreviews()
-    echo	'showNextFourDiaPreviews: function(){';
-    echo		 'let newHiddenLeftDias = this.diaPreview.hiddenLeftDias + 4;';
-    echo		 'let slideContainer = this.diaPreview.imagePreviewContainer;';
-    echo		 'slideContainer.setAttribute("transform", `translate(${225-newHiddenLeftDias*650}, 0)`);';
-    		      // set the new value
-    echo		  'this.diaPreview.hiddenLeftDias = newHiddenLeftDias;';
-    		      // hide inappropriate buttons
-    echo		  'this.hideInappropriateButtons();';
-    echo	'},'; // end showNextFourDiaPreviews
+    let wonderfulImageGallery<?php echo $this->index; ?> = {
+      // setup wonderfulImageGallery object
+      wonderfulImageGalleryElement: document.getElementById('wonderful-image-gallery-<?php echo $this->index; ?>'),
+      activeDia: 0,
+      isCurrentlyAnimating: false,
+      imgUrls: <?php echo json_encode($this->imageUrls); ?>,
+      currentlyShownImageIndex: 0,
+      mainImage: {
+        imageContainer: document.querySelector('#wonderful-image-gallery-<?php echo $this->index; ?> .main-images'),
+        animationDuration: <?php echo $this->animationDuration; ?>,
+        animationInterval: <?php echo $this->animationInterval ?>,
+        animation: <?php $this->js_animateMask(); ?>,
+        //remove old image if one exists
+        endAnimation: function(){
+          if( document.querySelector('#wonderful-image-gallery-<?php echo $this->index; ?> .old-image') !== null ){
+            document.querySelector('#wonderful-image-gallery-<?php echo $this->index; ?> .old-image').remove();
+          }
+          //remove rect
+          document.getElementById('new-rect<?php echo $this->index; ?>').remove();
+          //make new image the old image
+          document.querySelector('#wonderful-image-gallery-<?php echo $this->index; ?> .new-image').setAttribute('class', 'old-image');
+          document.querySelector('#wonderful-image-gallery-<?php echo $this->index; ?> .old-image').setAttribute('mask','url(#displayed_mask)');
+        } // end endAnimation
+      }, // end mainImage
+      diaPreview:{
+        imagePreviewContainer: document.querySelector('#wonderful-image-gallery-<?php echo $this->index; ?> .slides'),
+        imageBackgrounds: document.querySelectorAll('#wonderful-image-gallery-<?php echo $this->index; ?> .slides>rect'),
+        hiddenLeftDias: 0,
+        previousPageButton: document.querySelector('#wonderful-image-gallery-<?php echo $this->index; ?> .leftNav'),
+        nextPageButton: document.querySelector('#wonderful-image-gallery-<?php echo $this->index; ?> .rightNav')
+      }, // end diaPreview
+      playAndPauseButton:{
+        pauseAndPlayButton: document.querySelector('#wonderful-image-gallery-<?php echo $this->index; ?> .play-button'),
+        playIcon: document.querySelector('#wonderful-image-gallery-<?php echo $this->index; ?> .play-button-play-mode'),
+        pauseIcon: document.querySelector('#wonderful-image-gallery-<?php echo $this->index; ?> .play-button-pause-mode')
+      }, // end playAndPauseButton
+      init: function(){
+        let thisWonderfulImageGalleryObject = this;
+        // add eventlisteners pause and play button
+		    this.playAndPauseButton.pauseAndPlayButton.addEventListener('click', function(){
+		        if(thisWonderfulImageGalleryObject.isCurrentlyAnimating ){
+		            thisWonderfulImageGalleryObject.pauseSlideShow();
+			      }else{
+		            thisWonderfulImageGalleryObject.runSlideShow();
+		        }
+		    }); // end click this.playAndPauseButton.pauseAndPlayButton
+        // add eventlisteners next four dias button
+        this.diaPreview.nextPageButton.addEventListener('click', function(){
+            thisWonderfulImageGalleryObject.showNextFourDiaPreviews();
+        }); // end click this.diaPreview.nextPageButton
+        // add eventlisteners previous four dias button
+		      this.diaPreview.previousPageButton.addEventListener('click', function(){
+		          thisWonderfulImageGalleryObject.showPreviousFourDiaPreviews();
+		      }); // end click this.diaPreview.previousPageButton
+          // add eventlisteners main image
+          this.mainImage.imageContainer.addEventListener('click', function(){
+            if(thisWonderfulImageGalleryObject.isCurrentlyAnimating ){
+              thisWonderfulImageGalleryObject.pauseSlideShow();
+            }else{
+              thisWonderfulImageGalleryObject.runSlideShow();
+            }
+          }); // end click this.mainImage.imageContainer
+          // add eventlisteners to all preview images
+          this.diaPreview.imageBackgrounds.forEach(function(slide){
+            slide.addEventListener('click', function(){
+              thisWonderfulImageGalleryObject.currentlyShownImageIndex = parseInt(this.getAttribute('data-dia-nr'));
+              thisWonderfulImageGalleryObject.pauseSlideShow();
+              thisWonderfulImageGalleryObject.runSlide();
+            }); // end click single item in this.diaPreview.imageBackgrounds
+          }); // end forEach this.diaPreview.imageBackgrounds
+        }, // end init()
+        // hideInappropriateButtons()
+        hideInappropriateButtons: function(){
+          let hiddenLeftDias = this.diaPreview.hiddenLeftDias;
+          let diaTotal = this.imgUrls.length;
+          let nextButton = this.diaPreview.nextPageButton;
+          let previousButton = this.diaPreview.previousPageButton;
+          //hide/show left button if..
+          if(hiddenLeftDias == 0){
+            previousButton.style.display = "none";
+          }else{
+            previousButton.style.display = "inline";
+          }
+          //hide/show right button if..
+          if(diaTotal - hiddenLeftDias > 4){
+            nextButton.style.display = "inline";
+          }else{
+            nextButton.style.display = "none";
+          }
+        }, // end hideInappropriateButtons
+        // showNextFourDiaPreviews()
+        showNextFourDiaPreviews: function(){
+          let newHiddenLeftDias = this.diaPreview.hiddenLeftDias + 4;
+          let slideContainer = this.diaPreview.imagePreviewContainer;
+          slideContainer.setAttribute("transform", `translate(${225-newHiddenLeftDias*650}, 0)`);
+    		  // set the new value
+          this.diaPreview.hiddenLeftDias = newHiddenLeftDias;
+    		  // hide inappropriate buttons
+          this.hideInappropriateButtons();
+        }, // end showNextFourDiaPreviews
     // showPreviousFourDiaPreviews()
-    echo	'showPreviousFourDiaPreviews: function(){';
-    echo	  'let newHiddenLeftDias = this.diaPreview.hiddenLeftDias - 4;';
-    echo		'let slideContainer = this.diaPreview.imagePreviewContainer;';
-    echo		'slideContainer.setAttribute("transform", `translate(${225-newHiddenLeftDias*650}, 0)`);';
+        showPreviousFourDiaPreviews: function(){
+            let newHiddenLeftDias = this.diaPreview.hiddenLeftDias - 4;
+            let slideContainer = this.diaPreview.imagePreviewContainer;
+            slideContainer.setAttribute("transform", `translate(${225-newHiddenLeftDias*650}, 0)`);
     		    // set the new value
-    echo		'this.diaPreview.hiddenLeftDias = newHiddenLeftDias;';
+    		    this.diaPreview.hiddenLeftDias = newHiddenLeftDias;
     		    // hide inappropriate buttons
-    echo    'this.hideInappropriateButtons();';
-    echo	'},'; // end showPreviousFourDiaPreviews
-    // runSlideShow()
-    echo	'runSlideShow: function(){';
-    echo	   'let imgUrls = this.imgUrls;';
-    echo	   'let playIcon = this.playAndPauseButton.playIcon;';
-    echo	   'let pauseIcon = this.playAndPauseButton.pauseIcon;';
-    		   //indicate that the slideshow is currently running
-    echo   'this.isCurrentlyAnimating = true;';
-    		   //change button to "paused-icon"
-    echo		'playIcon.style.display = "none";';
-    echo		'pauseIcon.style.display = "inline";';
+            this.hideInappropriateButtons();
+          }, // end showPreviousFourDiaPreviews
+          // runSlideShow()
+          runSlideShow: function(){
+            let imgUrls = this.imgUrls;
+            let playIcon = this.playAndPauseButton.playIcon;
+            let pauseIcon = this.playAndPauseButton.pauseIcon;
+    		    //indicate that the slideshow is currently running
+            this.isCurrentlyAnimating = true;
+    		    //change button to "paused-icon"
+            playIcon.style.display = "none";
+            pauseIcon.style.display = "inline";
     		    // immidiately animate the next dia
-    echo		'this.showNextDia();';
-    echo '},'; // end runSlideShow
-    // pauseSlideShow()
-    echo	'pauseSlideShow: function(){';
-    echo		'let playIcon = this.playAndPauseButton.playIcon;';
-    echo		'let pauseIcon = this.playAndPauseButton.pauseIcon;';
+            this.showNextDia();
+          }, // end runSlideShow
+          // pauseSlideShow()
+          pauseSlideShow: function(){
+            let playIcon = this.playAndPauseButton.playIcon;
+            let pauseIcon = this.playAndPauseButton.pauseIcon;
     		    // change button to "play-icon"
-    echo		'pauseIcon.style.display = "none";';
-    echo		'playIcon.style.display = "inline";';
+            pauseIcon.style.display = "none";
+            playIcon.style.display = "inline";
     		    // stop the current animation
-    echo		'if(this.showNextDiaTimeout){';
-    echo		    'clearTimeout(this.showNextDiaTimeout);';
-    echo 		'}';
+            if(this.showNextDiaTimeout){
+                clearTimeout(this.showNextDiaTimeout);
+            }
     		    // indicate slideshow is currently not running
-    echo    'this.isCurrentlyAnimating = false;';
-    echo 	'},'; // end pauseSlideShow
-    // showNextDiaTimeout contains a placeholder for the timeout queing animations
-    echo	'showNextDiaTimeout: null,';
-    // showNextDia()
-    echo	'showNextDia: function(){';
-    echo	   'const animationDuration = this.mainImage.animationDuration;';
-    echo		 'const animationInterval = this.mainImage.animationInterval;';
-    echo		 'const animationCycleTime = animationInterval + animationDuration;';
-    echo		 'let thisWonderfulImageGalleryObject = this;';
-    echo		 'let imgUrls = this.imgUrls;';
-    echo		 'let nextImageIndex = this.currentlyShownImageIndex + 1;';
-    echo		 'if(nextImageIndex === imgUrls.length){';
-    echo				'nextImageIndex = 0;';
-    echo		'}';
+            this.isCurrentlyAnimating = false;
+          }, // end pauseSlideShow
+          // showNextDiaTimeout contains a placeholder for the timeout queing animations
+          showNextDiaTimeout: null,
+          // showNextDia()
+          showNextDia: function(){
+            const animationDuration = this.mainImage.animationDuration;
+            const animationInterval = this.mainImage.animationInterval;
+            const animationCycleTime = animationInterval + animationDuration;
+            let thisWonderfulImageGalleryObject = this;
+            let imgUrls = this.imgUrls;
+    	      let nextImageIndex = this.currentlyShownImageIndex + 1;
+            if(nextImageIndex === imgUrls.length){
+              nextImageIndex = 0;
+            }
     		    // set new index for the image to animate
-    echo    'this.currentlyShownImageIndex = nextImageIndex;';
+            this.currentlyShownImageIndex = nextImageIndex;
     		    // animate the image
-    echo		'this.runSlide();';
+            this.runSlide();
     		    // animate the next dia later, after the specified interval (infinite loop)
-    echo    'this.showNextDiaTimeout = setTimeout(function(){';
-    echo        'thisWonderfulImageGalleryObject.showNextDia();';
-    echo    '}, animationCycleTime);';
-    echo  '},'; // end showNextDia
+            this.showNextDiaTimeout = setTimeout(function(){
+              thisWonderfulImageGalleryObject.showNextDia();
+            }, animationCycleTime);
+          }, // end showNextDia
     // runslide()
-    echo	'runSlide: function(){';
-    echo	'let mask = `url(#wig_mask)`;';
-    echo	'let slideIndex = this.currentlyShownImageIndex;';
-    echo	'let imgUrls = this.imgUrls;';
-    		  //remove .active-slide and set .active-slide on appropriate element
-    echo	"document.querySelector('#wonderful-image-gallery-$this->index .slides>rect.active-slide').classList.remove('active-slide');";
-    echo	"document.querySelector('#wonderful-image-gallery-$this->index .slide-nr-'+ slideIndex ).previousSibling.classList.add('active-slide');";
-    		  //set slideDia to move if selection changes outside of the shown images
-    echo	'if(slideIndex % 4 === 0){';
-    			// set new value
-    echo	   'this.diaPreview.hiddenLeftDias = slideIndex;';
-    echo		 "document.querySelector('#wonderful-image-gallery-$this->index .slides').setAttribute('transform',".'`translate(${225-slideIndex*650}, 0)`'.");";
-    			// hide the inappropriate next or previous button
-    echo		  'this.hideInappropriateButtons();';
-    echo  '}';
-    		//createNewSlide image 'above' old image without clipping
-    echo	"let node = document.createElementNS('http://www.w3.org/2000/svg','image');";
-    echo	"node.setAttributeNS('http://www.w3.org/1999/xlink','href',imgUrls[slideIndex]);";
-    echo	"node.setAttributeNS(null,'width','2550');";
-    echo	"node.setAttributeNS(null,'height','1925');";
-    echo	"node.setAttributeNS(null,'mask', mask);";
-    echo	"node.setAttributeNS(null,'class','new-image');";
-    echo	"let mainImages = this.mainImage.imageContainer;";
-    echo	"mainImages.appendChild(node);";
-    		  // add a rect so transitions look good between screen sizes
-    echo	"node = document.createElementNS('http://www.w3.org/2000/svg','rect');";
-    echo	"node.setAttributeNS(null,'width','2550');";
-    echo	"node.setAttributeNS(null,'height','1925');";
-    echo	"node.setAttributeNS(null,'mask', mask);";
-    echo	"node.setAttributeNS(null,'id','new-rect$this->index');";
-    echo	"mainImages.insertBefore(node, mainImages.lastElementChild);";
-    		  //start animating
-    echo	'this.mainImage.animation();';
-    echo  '}'; // end runslide
-    echo  '}'; // end ???
-    echo "</script>";
+          runSlide: function(){
+            let mask = `url(#wig_mask)`;
+            let slideIndex = this.currentlyShownImageIndex;
+            let imgUrls = this.imgUrls;
+    		    //remove .active-slide and set .active-slide on appropriate element
+            document.querySelector('#wonderful-image-gallery-<?php echo $this->index; ?> .slides>rect.active-slide').classList.remove('active-slide');
+            document.querySelector('#wonderful-image-gallery-<?php echo $this->index; ?> .slide-nr-'+ slideIndex ).previousSibling.classList.add('active-slide');
+    		    //set slideDia to move if selection changes outside of the shown images
+            if(slideIndex % 4 === 0){
+    			       // set new value
+                 this.diaPreview.hiddenLeftDias = slideIndex;
+                 document.querySelector('#wonderful-image-gallery-<?php echo $this->index; ?> .slides').setAttribute('transform',`translate(${225-slideIndex*650}, 0)`);
+    			  // hide the inappropriate next or previous button
+            this.hideInappropriateButtons();
+            }
+    		    //createNewSlide image 'above' old image without clipping
+            let node = document.createElementNS('http://www.w3.org/2000/svg','image');
+            node.setAttributeNS('http://www.w3.org/1999/xlink','href',imgUrls[slideIndex]);
+            node.setAttributeNS(null,'width','2550');
+            node.setAttributeNS(null,'height','1925');
+            node.setAttributeNS(null,'mask', mask);
+            node.setAttributeNS(null,'class','new-image');
+            let mainImages = this.mainImage.imageContainer;
+            mainImages.appendChild(node);
+    		    // add a rect so transitions look good between screen sizes
+            node = document.createElementNS('http://www.w3.org/2000/svg','rect');
+            node.setAttributeNS(null,'width','2550');
+            node.setAttributeNS(null,'height','1925');
+            node.setAttributeNS(null,'mask', mask);
+            node.setAttributeNS(null,'id','new-rect<?php echo $this->index; ?>');
+            mainImages.insertBefore(node, mainImages.lastElementChild);
+    		    // start animating
+            this.mainImage.animation();
+          } // end runslide
+        } // end ???
+    </script>
+    <?php
   } // end $this->js()
   protected abstract function js_animateMask();
 } // end Animation
@@ -419,47 +413,47 @@ class widthAnimation extends Animation{
   }
   final protected function js_animateMask(){
     echo 'function(){';
-      // return a value between start and end as l goes from 0 to 1
-    echo  'function lerp(start, end, progress) {';
+          // return a value between start and end as l goes from 0 to 1
+    echo 'function lerp(start, end, progress) {';
     echo    'return  (start + (end - start) *  progress);';
     echo  '}';
-    echo	'let thisWonderfulImageGalleryObjectMainImage = this;';
-    echo 	'let duration = this.animationDuration;';
-    echo 	'const startTime = performance.now();';
+    echo  'let thisWonderfulImageGalleryObjectMainImage = this;';
+    echo  'let duration = this.animationDuration;';
+    echo  'const startTime = performance.now();';
     	    //get the element that will be animated
-    echo	"const rect1 = document.getElementById('clip1_rect');";
+    echo  "const rect1 = document.getElementById('clip1_rect');";
     	    // start animation sequence
-    echo	'window.requestAnimationFrame(animateFrame);';
+    echo  'window.requestAnimationFrame(animateFrame);';
     	    //animate a single frame
-    echo	'function animateFrame(){';
-    echo		  'const timeSinceStart = (performance.now() - startTime);';
-    		  // progress goes from 0 to 1 (1 means the animation is completed);
-    echo		  'const progress = Math.min(timeSinceStart / duration, 1);';
-    		  //update frame
-    echo	"rect1.setAttributeNS(null, 'width', lerp(0, 2550, progress));";
-    echo	'if(progress<1){';
-    echo			'window.requestAnimationFrame(animateFrame);';
-    echo	'}else{';
-    			//reset width on clipping so we can apply it on the newest slide
-    echo	    "rect1.setAttributeNS(null, 'width', 0);";
-    			// end animation
-    echo			'thisWonderfulImageGalleryObjectMainImage.endAnimation();';
-    echo   '}'; // end else
+    echo  'function animateFrame(){';
+    echo    'const timeSinceStart = (performance.now() - startTime);';
+    	       // progress goes from 0 to 1 (1 means the animation is completed);
+    echo     'const progress = Math.min(timeSinceStart / duration, 1);';
+    		      //update frame
+    echo     "rect1.setAttributeNS(null, 'width', lerp(0, 2550, progress));";
+    echo   'if(progress<1){';
+    echo      'window.requestAnimationFrame(animateFrame);';
+    echo     '}else{';
+    		    //reset width on clipping so we can apply it on the newest slide
+    echo    "rect1.setAttributeNS(null, 'width', 0);";
+    			  // end animation
+    echo    'thisWonderfulImageGalleryObjectMainImage.endAnimation();';
+    echo    '}'; // end else
     echo  '}'; // end animateFrame()
     echo '}'; // end callback fucntion
   }
 }
 
 // test code
-// $animation = new widthAnimation(
-//   1001,
-//   'black',
-//   'blue',
-//   'white',
-//   'pink',
-//   'black',
-//   array('https://lorempixel.com/400/200/sports/1/', 'https://lorempixel.com/400/200/sports/2/', 'https://lorempixel.com/400/200/sports/3/', 'https://lorempixel.com/400/200/sports/4/', 'https://lorempixel.com/400/200/sports/5/'),
-//   3000,
-//   5000
-// );
-// $animation->create();
+$animation = new widthAnimation(
+  1001,
+  'black',
+  'blue',
+  'white',
+  'pink',
+  'black',
+  array('https://lorempixel.com/400/200/sports/1/', 'https://lorempixel.com/400/200/sports/2/', 'https://lorempixel.com/400/200/sports/3/', 'https://lorempixel.com/400/200/sports/4/', 'https://lorempixel.com/400/200/sports/5/'),
+  3000,
+  5000
+);
+$animation->create();
