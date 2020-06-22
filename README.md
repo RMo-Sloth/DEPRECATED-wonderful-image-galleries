@@ -1,7 +1,7 @@
 # DEPRECATED: wonderful-image-galleries
 A gallery module with animated transitions.
 
-# examples and installation
+# installation
 This code is intended for use in Joomla! To see the current version on Github just download the master branch and install the module using the Joomla installer.
 # project structure
 <ul>
